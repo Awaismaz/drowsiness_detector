@@ -8,6 +8,16 @@ import tflite_runtime.interpreter as tflite
 
 import time
 import os
+import OPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
+GPIO.setup(15, GPIO.OUT)
+
+GPIO.output(11, False)
+GPIO.output(13, False)
+GPIO.output(15, False)
 
 
 basedir = os.path.dirname(__file__)
@@ -128,7 +138,7 @@ while(True):
     elif(rpred[0]==1 or lpred[0]==1):
         if (alarm_state==1):
             dec_counter+=1
-            if dec_counter==6:
+            if dec_counter==2:
                 score=0
                 dec_counter=0
                 alarm_state=0
@@ -139,7 +149,7 @@ while(True):
     if(score<0):
         score=0   
     
-    if(score>10):
+    if(score>2):
         
         alarm_state=1
 
@@ -151,9 +161,11 @@ while(True):
                 thicc=2
 
     if alarm_state==1:
-        print("Drowsy")
+        GPIO.output(11, True)
+        GPIO.output(15, True)
     else:
-        print("awake")
+        GPIO.output(11, False)
+        GPIO.output(15, False)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
